@@ -35,4 +35,30 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// POST /api/queries/:id/notes
+router.post('/:id/notes', async (req, res) => {
+  try {
+    const query = await Query.findById(req.params.id);
+    if (!query) return res.status(404).json({ error: 'Query not found' });
+    query.notes.push({ content: req.body.content });
+    await query.save();
+    res.json(query);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// DELETE /api/queries/:id/notes/:noteId
+router.delete('/:id/notes/:noteId', async (req, res) => {
+  try {
+    const query = await Query.findById(req.params.id);
+    if (!query) return res.status(404).json({ error: 'Query not found' });
+    query.notes.id(req.params.noteId).remove();
+    await query.save();
+    res.json(query);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 module.exports = router;
