@@ -2,6 +2,22 @@ const express = require('express');
 const router = express.Router();
 const Query = require('../../models/appModels/Query');
 
+// GET /api/queries?page=<int>&limit=<int>
+router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const status = req.query.status;
+  const skip = (page - 1) * limit;
+  try {
+    const query = status ? { status } : {};
+    const queries = await Query.find(query).skip(skip).limit(limit);
+    const total = await Query.countDocuments(query);
+    res.json({ queries, total, page, pages: Math.ceil(total / limit) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/queries
 router.post('/', async (req, res) => {
   try {
