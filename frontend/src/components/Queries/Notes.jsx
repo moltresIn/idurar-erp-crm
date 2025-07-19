@@ -1,31 +1,70 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, List, Spin, message } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, List, Spin } from 'antd';
+import { useParams, useNavigate } from 'react-router-dom';
+import request from '@/request/request';
 
 const { TextArea } = Input;
 
 const Notes = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const fetchNotes = async () => {};
+  useEffect(() => {
+    fetchNotes();
+  }, [id]);
+
+  const fetchNotes = async () => {
+    setLoading(true);
+    try {
+      const response = await request.get({ entity: `queries/${id}` });
+      setNotes(response.notes || []);
+    } catch (error) {
+      // Handled by request.errorHandler
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const addNote = async () => {
     if (!newNote.trim()) {
-      message.error('Note content cannot be empty');
       return;
+    }
+    setLoading(true);
+    try {
+      await request.post({
+        entity: `queries/${id}/notes`,
+        jsonData: { content: newNote },
+      });
+      setNewNote('');
+      await fetchNotes();
+    } catch (error) {
+      // Handled by request.errorHandler
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteNote = async (noteId) => {
-    console.log(noteId);
+    setLoading(true);
+    try {
+      await request.delete({ entity: `queries/${id}/notes`, id: noteId });
+      await fetchNotes();
+    } catch (error) {
+      // Handled by request.errorHandler
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+      <Button type="link" onClick={() => navigate('/queries')} style={{ marginBottom: '16px' }}>
+        Back to Queries
+      </Button>
       {loading && <Spin tip="Loading..." />}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       <Form layout="vertical">
         <Form.Item label="Add Note">
           <TextArea

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Pagination, Select, Spin, message } from 'antd';
-import axios from 'axios';
+import { Table, Button, Pagination, Select, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import request from '@/request/request'; // Your request utility
 
 const { Option } = Select;
 
@@ -11,8 +11,26 @@ const QueryList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchQueries();
+  }, [page, statusFilter]);
+
+  const fetchQueries = async () => {
+    setLoading(true);
+    try {
+      const response = await request.get({
+        entity: `queries?page=${page}&limit=10${statusFilter ? `&status=${statusFilter}` : ''}`,
+      });
+      setQueries(response.queries || []);
+      setTotalPages(response.pages || 1);
+    } catch (error) {
+      // Handled by request.errorHandler
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = [
     {
@@ -46,9 +64,18 @@ const QueryList = () => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        <Button type="primary" onClick={() => navigate(`/queries/${record._id}`)}>
-          Edit
-        </Button>
+        <>
+          <Button
+            type="primary"
+            onClick={() => navigate(`/queries/${record._id}`)}
+            style={{ marginRight: 8 }}
+          >
+            Edit
+          </Button>
+          <Button type="default" onClick={() => navigate(`/queries/${record._id}/notes`)}>
+            View Notes
+          </Button>
+        </>
       ),
     },
   ];
@@ -56,7 +83,6 @@ const QueryList = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
       {loading && <Spin tip="Loading..." />}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div style={{ marginBottom: '16px' }}>
         <Select
           style={{ width: 200 }}

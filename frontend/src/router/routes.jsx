@@ -47,7 +47,7 @@ let routes = {
       element: <About />,
     },
     {
-      path: '/query',
+      path: '/queries',
       element: <QueryList />,
     },
     {
