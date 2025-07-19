@@ -69,12 +69,13 @@ router.delete('/:id/notes/:noteId', async (req, res) => {
   try {
     const query = await Query.findById(req.params.id);
     if (!query) return res.status(404).json({ error: 'Query not found' });
-    query.notes.id(req.params.noteId).remove();
+    const note = query.notes.id(req.params.noteId);
+    if (!note) return res.status(404).json({ error: 'Note not found' });
+    query.notes.pull({ _id: req.params.noteId });
     await query.save();
     res.json(query);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
-
 module.exports = router;

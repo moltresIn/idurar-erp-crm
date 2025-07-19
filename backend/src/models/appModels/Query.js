@@ -7,4 +7,6 @@ const querySchema = new mongoose.Schema({
   resolution: { type: String },
   notes: [{ content: String, createdAt: { type: Date, default: Date.now } }],
 });
+
+querySchema.index({ customerName: 1 });
 module.exports = mongoose.model('Query', querySchema);

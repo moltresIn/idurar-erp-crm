@@ -9,7 +9,6 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-
   taxName: {
     type: String,
     required: true,

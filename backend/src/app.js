@@ -4,7 +4,7 @@ const cors = require('cors');
 const compression = require('compression');
 
 const cookieParser = require('cookie-parser');
-
+require('./models/index')();
 const coreAuthRouter = require('./routes/coreRoutes/coreAuth');
 const coreApiRouter = require('./routes/coreRoutes/coreApi');
 const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
