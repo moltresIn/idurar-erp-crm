@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Define the schema
 const SettingSchema = new mongoose.Schema(
   {
     settingKey: {
@@ -16,5 +17,5 @@ const SettingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Setting = mongoose.model('Setting', SettingSchema);
-module.exports = Setting;
+// Export the model, but only compile it if it hasn't been compiled yet
+module.exports = mongoose.models.Setting || mongoose.model('Setting', SettingSchema);
