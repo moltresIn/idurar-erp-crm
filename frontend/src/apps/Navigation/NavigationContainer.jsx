@@ -21,6 +21,7 @@ import {
   UserOutlined,
   CreditCardOutlined,
   MenuOutlined,
+  QuestionOutlined,
   FileOutlined,
   ShopOutlined,
   FilterOutlined,
@@ -59,7 +60,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <CustomerServiceOutlined />,
       label: <Link to={'/customer'}>{translate('customers')}</Link>,
     },
-
+    {
+      key: 'queries',
+      icon: <QuestionOutlined />,
+      label: <Link to={'/queries'}>{translate('queries')}</Link>,
+    },
     {
       key: 'invoice',
       icon: <ContainerOutlined />,
