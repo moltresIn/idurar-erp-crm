@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Query = require('../../models/appModels/Query');
+const Customer = require('../../models/appModels/Client');
 
 // GET /api/queries?page=<int>&limit=<int>
 router.get('/', async (req, res) => {
@@ -26,6 +27,15 @@ router.post('/', async (req, res) => {
     res.status(201).json(query);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/customers', async (req, res) => {
+  try {
+    const customers = await Customer.find();
+    res.json({ customers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

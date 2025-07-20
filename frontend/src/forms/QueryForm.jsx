@@ -16,7 +16,7 @@ const QueryForm = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await request.get({ entity: 'customers' });
+        const response = await request.get({ entity: 'queries/customers' });
         setCustomers(response.customers || []);
       } catch (error) {
         console.error(error);
