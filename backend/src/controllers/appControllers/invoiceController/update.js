@@ -80,4 +80,52 @@ const update = async (req, res) => {
   });
 };
 
-module.exports = update;
+const updateItemNote = async (req, res) => {
+  try {
+    const { id, itemId } = req.params;
+    const { notes } = req.body;
+
+    if (!notes || typeof notes !== 'string') {
+      return res.status(400).json({
+        success: false,
+        result: null,
+        message: 'Invalid notes format',
+      });
+    }
+
+    const invoice = await Model.findOne({ _id: id, removed: false });
+    if (!invoice)
+      return res.status(404).json({
+        /* ... */
+      });
+
+    const item = invoice.items.id(itemId);
+    if (!item)
+      return res.status(404).json({
+        /* ... */
+      });
+
+    item.notes = notes;
+    await invoice.save();
+
+    return res.status(200).json({
+      success: true,
+      result: {
+        _id: invoice._id,
+        itemId: item._id,
+        notes: item.notes,
+      },
+      message: 'Notes updated successfully',
+    });
+  } catch (error) {
+    console.error('Update note error:', error);
+    return res.status(500).json({
+      success: false,
+      result: null,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+module.exports = { update, updateItemNote };
